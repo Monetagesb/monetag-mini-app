@@ -1,30 +1,25 @@
-// api/reward.js
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Only POST requests are allowed' });
     }
 
-    const { rewardCount, username } = req.body;
+    const { rewardCount, userId } = req.body;
 
-    // Check if required data is available
-    if (!rewardCount || !username) {
-        return res.status(400).json({ message: 'Missing reward count or username' });
-    }
-
-    // Telegram bot token
+    // Telegram bot token and chat ID
     const botToken = process.env.TG_BOT_TOKEN;
+    const chatId = userId; // Replace with your method of identifying the chat ID
 
-    // Telegram message
-    const message = `User @${username} earned a reward! Current rewards: ${rewardCount}`;
+    // Message to send to the Telegram bot
+    const message = `User ${chatId} earned a reward! Current rewards: ${rewardCount}`;
 
-    // Telegram API URL to send the message
+    // Send message to Telegram bot
     const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
+    
     try {
         const response = await fetch(telegramApiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: `@${username}`, text: message }),
+            body: JSON.stringify({ chat_id: chatId, text: message }),
         });
 
         if (!response.ok) {
