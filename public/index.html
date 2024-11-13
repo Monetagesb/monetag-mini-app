@@ -6,76 +6,11 @@
     <title>Rewarded Interstitial Ad Example</title>
     <!-- Monetag script for rewarded interstitial -->
     <script src='//niphaumeenses.net/vignette.min.js' data-zone='8459619' data-sdk='show_8459619'></script>
-    <style>
-        /* Basic styling */
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #282c34;
-            color: #ffffff;
-        }
-        .ad-container {
-            text-align: center;
-            padding: 30px;
-            background: #3b3f47;
-            border-radius: 12px;
-            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
-            width: 300px;
-            animation: fadeIn 1s ease;
-        }
-        .ad-container h1 {
-            margin-bottom: 10px;
-            font-size: 24px;
-            color: #00ff99;
-        }
-        .reward-counter {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #ffeb3b;
-        }
-        .ad-container button {
-            padding: 12px 25px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            background-color: #007bff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: 0px 5px 15px rgba(0, 123, 255, 0.4);
-        }
-        .ad-container button:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-        .ad-container button:active {
-            transform: scale(0.98);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .username-input {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: none;
-            width: 80%;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="/styles/styles.css">
 </head>
 <body>
     <div class="ad-container">
         <h1>Earn Rewards</h1>
-        <input type="text" id="username" class="username-input" placeholder="Enter your Telegram username">
         <p class="reward-counter">Rewards Earned: <span id="reward-count">0</span></p>
         <button onclick="showRewardedAd()">Watch Ad for Reward</button>
     </div>
@@ -84,25 +19,17 @@
         let rewardCount = 0;
 
         function showRewardedAd() {
-            const username = document.getElementById('username').value.trim();
-            if (!username) {
-                alert("Please enter your Telegram username to earn rewards.");
-                return;
-            }
-
-            // Check if the ad script function is available
             if (typeof show_8459619 === 'function') {
                 show_8459619().then(() => {
-                    // Increment the reward count and update display
                     rewardCount += 1;
                     document.getElementById('reward-count').textContent = rewardCount;
                     alert('You have earned a reward!');
 
-                    // Send reward count and username to Vercel API
-                    fetch('https://monetag-mini-app.vercel.app/api/reward', {
+                    // Send reward count to Vercel API
+                    fetch('/api/reward', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ rewardCount, username }),
+                        body: JSON.stringify({ rewardCount, userId: "USER_CHAT_ID" }), // Replace USER_CHAT_ID with the actual user chat ID
                     })
                     .then(response => response.json())
                     .then(data => console.log('Reward sent:', data))
